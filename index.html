@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FlowPitch x Core dna</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg" aria-hidden="true">
+    <div class="bg-grid"></div>
+    <div class="bg-orb bg-orb-a"></div>
+    <div class="bg-orb bg-orb-b"></div>
+    <div class="bg-noise"></div>
+  </div>
+
+  <header class="topbar" id="topbar">
+    <div class="brand-lockup">
+      <div class="brand-pill">FlowPitch x Core dna</div>
+      <div>
+        <div class="brand-title">Adaptive presentation engine</div>
+        <div class="brand-sub">Core dna theme in, ANZ-ready story out</div>
+      </div>
+    </div>
+
+    <div class="topbar-actions">
+      <button id="exportPdfBtn" type="button">Export PDF</button>
+    </div>
+
+    <div class="progress-wrap" aria-hidden="true">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+  </header>
+
+  <main id="deck" class="deck" aria-live="polite"></main>
+
+  <aside class="dots" id="dots" aria-label="Slide navigation"></aside>
+
+  <div class="hint">Space / arrows to navigate</div>
+
+  <template id="slideTemplate">
+    <section class="slide" data-slide>
+      <div class="slide-shell">
+        <div class="slide-kicker" data-animate></div>
+        <div class="slide-copy">
+          <h1 class="slide-headline grad" data-animate></h1>
+          <p class="slide-subheadline" data-animate></p>
+        </div>
+        <div class="slide-body" data-body></div>
+      </div>
+    </section>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>

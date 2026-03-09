@@ -1,0 +1,175 @@
+{
+  "meta": {
+    "deckId": "flowpitch-coredna-integration",
+    "title": "FlowPitch x Core dna",
+    "theme": "Core dna to ANZ adaptive brand morph"
+  },
+  "slides": [
+    {
+      "type": "title",
+      "headline": "FlowPitch inside the Core dna ecosystem",
+      "subheadline": "From Core dna red to ANZ blue: audience-ready presentations generated from the same content engine.",
+      "bullets": [
+        "Start on-brand instantly",
+        "Adapt for each audience",
+        "Turn content into decisions"
+      ],
+      "note": "Core dna theme entry"
+    },
+    {
+      "type": "content",
+      "headline": "Why Core dna is the right launch partner",
+      "subheadline": "Core dna already sells the ingredients FlowPitch needs.",
+      "bullets": [
+        "One platform, less vendor sprawl",
+        "Content, commerce, orchestration together",
+        "Enterprise teams need speed",
+        "Marketers want control",
+        "Executives want fewer handoffs"
+      ],
+      "note": "Core dna positioning"
+    },
+    {
+      "type": "beforeAfter",
+      "headline": "The presentation bottleneck is still real",
+      "subheadline": "Teams have content. They still struggle to turn it into the right story.",
+      "left": {
+        "title": "Today",
+        "bullets": [
+          "Decks rebuilt every meeting",
+          "Messaging drifts by audience",
+          "Technical slides overwhelm buyers",
+          "Presenters edit formatting, not strategy",
+          "Relationships lose attention"
+        ]
+      },
+      "right": {
+        "title": "With FlowPitch",
+        "bullets": [
+          "Decks generated in minutes",
+          "Audience-specific narrative automatically",
+          "Complex content becomes readable",
+          "Presenter focuses on decisions",
+          "Brand stays consistent everywhere"
+        ]
+      },
+      "note": "problem to solution"
+    },
+    {
+      "type": "content",
+      "headline": "What FlowPitch adds to Core dna",
+      "subheadline": "A presentation generation layer that sits on top of your content engine.",
+      "bullets": [
+        "Pull approved website content",
+        "Reuse brand tokens automatically",
+        "Generate audience-specific deck structures",
+        "Summarise long documents fast",
+        "Export polished presentations instantly"
+      ],
+      "note": "solution slide"
+    },
+    {
+      "type": "content",
+      "headline": "How the integration works",
+      "subheadline": "A simple workflow from platform content to meeting-ready output.",
+      "bullets": [
+        "Ingest Core dna content and assets",
+        "Select industry, audience, objective",
+        "Shape narrative with AI rules",
+        "Render interactive web presentation",
+        "Export PDF or share live"
+      ],
+      "note": "workflow slide"
+    },
+    {
+      "type": "content",
+      "headline": "Proof of capability: brand morphing on demand",
+      "subheadline": "Start in Core dna's visual system, then reframe the same story for ANZ in blue.",
+      "bullets": [
+        "Same core content",
+        "Different visual identity",
+        "Different audience emphasis",
+        "No manual redesign cycle",
+        "Every deck feels native"
+      ],
+      "note": "theme morph slide"
+    },
+    {
+      "type": "content",
+      "headline": "Why this matters commercially",
+      "subheadline": "FlowPitch lets the customer focus on relationships and decisions instead of slide production.",
+      "bullets": [
+        "Faster sales conversations",
+        "Sharper executive briefings",
+        "Less agency rework",
+        "Lower internal content friction",
+        "More value from existing content"
+      ],
+      "note": "benefits slide"
+    },
+    {
+      "type": "beforeAfter",
+      "headline": "A strong repurposing engine",
+      "subheadline": "One source can become many audience-ready outputs.",
+      "left": {
+        "title": "Input",
+        "bullets": [
+          "Technical initiative deck",
+          "Product documentation",
+          "Website content blocks",
+          "Case studies and proposals",
+          "Long reports and notes"
+        ]
+      },
+      "right": {
+        "title": "Output",
+        "bullets": [
+          "Marketing presentation",
+          "Sales version by industry",
+          "Executive summary pack",
+          "Partner pitch narrative",
+          "Meeting-specific leave-behind"
+        ]
+      },
+      "note": "repurposing slide"
+    },
+    {
+      "type": "content",
+      "headline": "Best-fit use cases for Core dna customers",
+      "subheadline": "Where FlowPitch can slot into the ecosystem quickly.",
+      "bullets": [
+        "Customer-specific sales decks",
+        "Industry-switched presentations",
+        "Partner ecosystem pitches",
+        "Internal rollout summaries",
+        "Demo stories from website content"
+      ],
+      "note": "use cases"
+    },
+    {
+      "type": "content",
+      "headline": "Integration options for Core dna",
+      "subheadline": "Multiple ways to make FlowPitch part of the platform story.",
+      "bullets": [
+        "Native ecosystem add-on",
+        "Co-branded demo generator",
+        "Partner-led pilot program",
+        "Sales enablement layer",
+        "Strategic investment pathway"
+      ],
+      "note": "commercial options"
+    },
+    {
+      "type": "closing",
+      "headline": "Proposed next step",
+      "subheadline": "Build a Core dna-powered demo that uses Core dna content, then show the same deck morph into an ANZ-ready version.",
+      "bullets": [
+        "Create live demonstration",
+        "Define ownership boundaries",
+        "Test with pilot organisations",
+        "Package into ecosystem offer"
+      ],
+      "note": "closing CTA"
+    }
+  ]
+}
