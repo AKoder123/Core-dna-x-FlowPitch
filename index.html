@@ -1,37 +1,505 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>FlowPitch × Core dna</title>
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FlowPitch × Core dna</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden}
+body{font-family:-apple-system,'Segoe UI','Helvetica Neue',Arial,sans-serif;background:#fff;color:#1a1a2e}
+:root{
+  --red:#e8002d;--reddim:#fde8ec;
+  --dark:#0f172a;--muted:#6b7280;--border:#e5e7eb;--card:#f9fafb;
+  --anz-bg:#001236;--anz-bg2:#001f6b;--anz-blue:#00adef;--anz-mid:#007dba;
+  --topbar:60px;
+}
+
+/* NAV */
+#topNav{position:fixed;top:0;left:0;right:0;height:var(--topbar);background:#fff;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;padding:0 40px;z-index:1000;transition:background .65s,border-color .65s}
+#topNav.anz{background:rgba(0,18,54,.97);border-color:rgba(0,173,239,.2)}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.nav-logo svg{width:24px;height:24px}
+#navTitle{font-size:.85rem;font-weight:700;color:var(--dark);transition:color .65s}
+#topNav.anz #navTitle{color:#fff}
+.nav-r{display:flex;align-items:center;gap:14px}
+#slideCounter{font-size:.75rem;color:#9ca3af;transition:color .65s}
+#topNav.anz #slideCounter{color:rgba(255,255,255,.35)}
+#exportPdfBtn{background:transparent;border:1px solid #d1d5db;color:#6b7280;padding:6px 16px;border-radius:6px;font-size:.78rem;cursor:pointer;transition:all .2s;font-family:inherit}
+#exportPdfBtn:hover{border-color:var(--red);color:var(--red)}
+#topNav.anz #exportPdfBtn{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.55)}
+#topNav.anz #exportPdfBtn:hover{border-color:var(--anz-blue);color:var(--anz-blue)}
+
+/* DECK */
+#deck{position:fixed;top:var(--topbar);left:0;right:0;bottom:0;overflow:hidden}
+
+/* SLIDE BASE */
+.sl{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:56px 96px;opacity:0;pointer-events:none;transform:translateX(44px);transition:opacity .5s cubic-bezier(.4,0,.2,1),transform .5s cubic-bezier(.4,0,.2,1);overflow:hidden}
+.sl.active{opacity:1;pointer-events:all;transform:translateX(0)}
+.sl.gone{opacity:0;transform:translateX(-44px);pointer-events:none}
+
+/* THEMES */
+.sl.cdna{background:#fff}
+.sl.cdna::before{content:'';position:absolute;top:-100px;right:-60px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(232,0,45,.055),transparent 70%);pointer-events:none}
+.sl.cdna::after{content:'';position:absolute;top:48px;right:72px;width:160px;height:160px;background-image:radial-gradient(circle,rgba(232,0,45,.22) 1.5px,transparent 1.5px);background-size:18px 18px;opacity:.5;pointer-events:none}
+
+.sl.morph{background:linear-gradient(135deg,#ffffff 0%,#eef6fd 45%,#001f6b 100%)}
+.sl.anz{background:linear-gradient(135deg,#001236 0%,#001f6b 55%,#00338d 100%)}
+.sl.anz::before{content:'';position:absolute;top:-140px;right:-70px;width:460px;height:460px;border-radius:50%;background:radial-gradient(circle,rgba(0,173,239,.1),transparent 70%);pointer-events:none}
+.sl.anz::after{content:'';position:absolute;bottom:-80px;left:-50px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(0,125,186,.1),transparent 70%);pointer-events:none}
+
+/* ANIMATE */
+.a{opacity:0;transform:translateY(22px);transition:opacity .42s ease,transform .42s ease}
+.sl.active .a{opacity:1;transform:translateY(0)}
+.sl.active .a:nth-child(1){transition-delay:.08s}
+.sl.active .a:nth-child(2){transition-delay:.17s}
+.sl.active .a:nth-child(3){transition-delay:.26s}
+.sl.active .a:nth-child(4){transition-delay:.35s}
+.sl.active .a:nth-child(5){transition-delay:.43s}
+.sl.active .a:nth-child(6){transition-delay:.51s}
+@media(prefers-reduced-motion:reduce){.a,.sl{transition:none!important;animation:none!important}}
+
+/* TYPOGRAPHY */
+.lbl{font-size:.68rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin-bottom:12px}
+.cdna .lbl{color:var(--red)}
+.morph .lbl{color:var(--anz-mid)}
+.anz .lbl,.closing .lbl{color:var(--anz-blue)}
+.hdl{font-size:clamp(1.9rem,4vw,3.5rem);font-weight:800;line-height:1.1;letter-spacing:-.025em;margin-bottom:16px}
+.cdna .hdl,.morph .hdl{color:var(--dark)}
+.anz .hdl{color:#fff}
+.sub{font-size:clamp(.92rem,1.5vw,1.15rem);line-height:1.6;max-width:680px;font-weight:400;margin-bottom:32px}
+.cdna .sub,.morph .sub{color:var(--muted)}
+.anz .sub{color:rgba(255,255,255,.62)}
+.red{color:var(--red)}
+.blue{color:var(--anz-blue)}
+
+/* TITLE */
+.title-badge{display:inline-flex;align-items:center;gap:8px;background:var(--reddim);color:var(--red);font-size:.68rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;padding:5px 14px;border-radius:100px;margin-bottom:24px}
+.title-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0}
+.title-big{font-size:clamp(3rem,6.8vw,5.8rem);font-weight:900;line-height:1.05;letter-spacing:-.03em;margin-bottom:20px;color:var(--dark)}
+.title-big .x{color:#d1d5db;font-weight:300}
+.title-big .cg{background:linear-gradient(135deg,#e8002d,#ff4d6d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.tagline{display:flex;align-items:center;gap:14px;margin-top:8px}
+.tl{height:2px;width:72px;background:linear-gradient(90deg,var(--red),transparent)}
+.ti{font-size:.78rem;color:#9ca3af;font-style:italic;letter-spacing:.04em}
+
+/* BULLET LIST */
+.bl{list-style:none;display:flex;flex-direction:column;gap:12px;max-width:700px}
+.bl li{display:flex;align-items:flex-start;gap:11px;font-size:clamp(.86rem,1.25vw,1rem);line-height:1.55}
+.cdna .bl li{color:#374151}
+.morph .bl li{color:#374151}
+.anz .bl li{color:rgba(255,255,255,.82)}
+.bl li::before{content:'';flex-shrink:0;width:18px;height:18px;border-radius:50%;margin-top:1px;background-repeat:no-repeat;background-position:center;background-size:10px}
+.cdna .bl li::before,.morph .bl li::before{background-color:var(--reddim);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpolyline points='1.5,5.5 4,8 8.5,2' fill='none' stroke='%23e8002d' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+.anz .bl li::before{background-color:rgba(0,173,239,.18);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpolyline points='1.5,5.5 4,8 8.5,2' fill='none' stroke='%2300adef' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+
+/* STEPS */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:4px;position:relative}
+.steps::before{content:'';position:absolute;top:27px;left:13%;right:13%;height:1px;background:linear-gradient(90deg,transparent,var(--red) 30%,var(--red) 70%,transparent);opacity:.25;z-index:0}
+.step{position:relative;z-index:1;text-align:center;padding:0 4px}
+.scir{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#e8002d,#ff5c7a);color:#fff;font-size:.88rem;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;box-shadow:0 4px 14px rgba(232,0,45,.22)}
+.slbl{font-size:.85rem;font-weight:700;color:var(--dark);margin-bottom:5px}
+.sdsc{font-size:.74rem;color:var(--muted);line-height:1.5}
+
+/* MORPH VISUAL */
+.morph-row{display:flex;align-items:center;justify-content:center;gap:28px;margin:20px 0}
+.bc{display:flex;flex-direction:column;align-items:center;gap:9px}
+.bx{width:108px;height:70px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase}
+.bx.cdna-bx{background:#fff;border:2px solid var(--red);color:var(--red);box-shadow:0 3px 16px rgba(232,0,45,.12)}
+.bx.fp-bx{width:82px;height:82px;border-radius:50%;background:linear-gradient(135deg,#fff,#ddf0fc,#001f6b,#00adef,#e8002d,#fff);background-size:400%;animation:mg 4s ease infinite;border:2px solid rgba(255,255,255,.5);box-shadow:0 6px 24px rgba(0,100,200,.25)}
+@keyframes mg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.bx.anz-bx{background:#001f6b;border:2px solid var(--anz-blue);color:var(--anz-blue);box-shadow:0 3px 16px rgba(0,173,239,.18)}
+.blbl{font-size:.65rem;color:#6b7280;letter-spacing:.1em;text-transform:uppercase}
+.sl.morph .blbl{color:#374151}
+.marr{font-size:1.7rem;color:#d1d5db;animation:ap 1.6s ease-in-out infinite}
+@keyframes ap{0%,100%{transform:translateX(0);opacity:.4}50%{transform:translateX(4px);opacity:.85}}
+.morph-note{font-size:.82rem;color:#9ca3af;font-style:italic;text-align:center;margin-top:2px}
+
+/* CARDS */
+.cg4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:4px}
+.cg2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:4px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 18px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#e8002d,#ff8fab);border-radius:14px 14px 0 0}
+.anz .card{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1)}
+.anz .card::before{background:linear-gradient(90deg,var(--anz-mid),var(--anz-blue))}
+.ci{display:flex;align-items:center;margin-bottom:12px;height:32px}
+.ct{font-size:.83rem;font-weight:700;color:var(--dark);margin-bottom:6px}
+.cb{font-size:.76rem;color:var(--muted);line-height:1.55}
+.anz .ct{color:#fff}
+.anz .cb{color:rgba(255,255,255,.58)}
+
+/* BENEFIT CARDS */
+.bcard{background:rgba(255,255,255,.06);border:1px solid rgba(0,173,239,.18);border-radius:16px;padding:28px 26px;position:relative;overflow:hidden}
+.bcard::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--anz-mid),var(--anz-blue))}
+.bn{font-size:2.8rem;font-weight:900;color:rgba(0,173,239,.18);line-height:1;margin-bottom:8px;letter-spacing:-.04em}
+.bt{font-size:1.05rem;font-weight:700;color:#fff;margin-bottom:8px}
+.bb{font-size:.82rem;color:rgba(255,255,255,.58);line-height:1.6}
+
+/* SPLIT */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:4px}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px}
+.sc.hi{border-color:rgba(232,0,45,.28);background:#fff5f7}
+.st{font-size:.9rem;font-weight:700;color:var(--dark);margin-bottom:14px;display:flex;align-items:center;gap:9px}
+.st .dot{width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0}
+.snote{margin-top:20px;font-size:.72rem;color:#9ca3af;text-align:center;letter-spacing:.07em;text-transform:uppercase}
+
+/* CLOSING */
+.cbig{font-size:clamp(2rem,4vw,3.4rem);font-weight:900;line-height:1.1;letter-spacing:-.025em;max-width:800px;margin-bottom:22px;color:#fff}
+.cbig em{font-style:normal;color:var(--red)}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#e8002d,#ff4d6d);color:#fff;font-size:.93rem;font-weight:700;padding:13px 34px;border-radius:100px;box-shadow:0 8px 24px rgba(232,0,45,.32);cursor:default;transition:transform .2s,box-shadow .2s;letter-spacing:.02em}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(232,0,45,.42)}
+.cfn{margin-top:26px;font-size:.8rem;color:rgba(255,255,255,.28);font-style:italic}
+
+/* DOTS */
+#dots{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:500}
+.dot{width:6px;height:6px;border-radius:50%;background:rgba(0,0,0,.15);cursor:pointer;transition:all .3s}
+.dot.on{width:20px;border-radius:3px;background:var(--red)}
+body.anz-mode .dot{background:rgba(255,255,255,.2)}
+body.anz-mode .dot.on{background:var(--anz-blue)}
+
+/* HINTS */
+#hints{position:fixed;bottom:22px;right:32px;font-size:.68rem;color:rgba(0,0,0,.2);display:flex;gap:7px;align-items:center;z-index:500}
+body.anz-mode #hints{color:rgba(255,255,255,.2)}
+.k{border:1px solid currentColor;border-radius:3px;padding:2px 6px;font-size:.65rem}
+
+/* PDF */
+body.exporting .a{opacity:1!important;transform:none!important;filter:none!important;transition:none!important}
+body.exporting .cg{background:none!important;-webkit-background-clip:initial!important;background-clip:initial!important;-webkit-text-fill-color:#e8002d!important}
+#pdfStage{position:fixed;left:-10000px;top:0;width:1920px;height:1080px;overflow:hidden}
+
+/* COMPACT */
+@media(max-height:600px){
+  .sl{padding:36px 64px}
+  .hdl{font-size:clamp(1.5rem,3.5vw,2.4rem)}
+  .sub{font-size:.9rem;margin-bottom:18px}
+  .cg4{gap:10px}
+  .card{padding:12px}
+  .steps::before{display:none}
+  .scir{width:40px;height:40px}
+}
+@media(max-width:768px){
+  .sl{padding:48px 30px}
+  .cg4{grid-template-columns:1fr 1fr}
+  .split,.cg2{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr 1fr}
+  .steps::before{display:none}
+}
+</style>
 </head>
 <body>
 
-  <!-- TOP NAV -->
-  <nav id="topNav">
-    <div class="nav-brand" id="navBrand">FlowPitch × Core dna</div>
-    <div class="nav-actions">
-      <span class="nav-counter">
-        <span id="slideCounter">1</span>&nbsp;/&nbsp;<span id="slideTotal">—</span>
-      </span>
-      <button id="exportPdfBtn" type="button">Export PDF</button>
+<nav id="topNav">
+  <div class="nav-brand">
+    <div class="nav-logo">
+      <svg viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="8" r="5.5" fill="#e8002d"/>
+        <circle cx="8.5" cy="17" r="3.2" fill="#e8002d" opacity=".45"/>
+      </svg>
     </div>
-  </nav>
+    <span id="navTitle">FlowPitch × Core dna</span>
+  </div>
+  <div class="nav-r">
+    <span id="slideCounter">1 / 10</span>
+    <button id="exportPdfBtn" type="button">Export PDF</button>
+  </div>
+</nav>
 
-  <!-- SLIDES -->
-  <div id="slideContainer"></div>
+<div id="deck">
 
-  <!-- PROGRESS DOTS -->
-  <div id="progressDots"></div>
-
-  <!-- KEYBOARD HINT -->
-  <div id="keyHint">
-    <span class="key-badge">←</span>
-    <span class="key-badge">Space</span>
-    <span class="key-badge">→</span>
+  <!-- 1 TITLE -->
+  <div class="sl cdna" data-t="cdna">
+    <div class="a title-badge">Partnership Pitch · 2026</div>
+    <div class="a title-big">FlowPitch<span class="x"> × </span><span class="cg">Core dna</span></div>
+    <p class="a sub" style="margin-bottom:28px">Making Core dna's single source of truth presentation-ready — so every client conversation is as powerful as the platform behind it.</p>
+    <div class="a tagline"><div class="tl"></div><div class="ti">"From structured content to tailored conversation"</div></div>
   </div>
 
-  <script src="app.js"></script>
+  <!-- 2 THE OPPORTUNITY -->
+  <div class="sl cdna" data-t="cdna">
+    <div class="a lbl">The Opportunity</div>
+    <div class="a hdl">Core dna is already the<br><span class="red">single source of truth</span></div>
+    <p class="a sub">Your platform centralises content, commerce, personalization, and automation. FlowPitch makes that same structured content work just as hard in the room as it does on the website.</p>
+    <ul class="a bl">
+      <li>Core dna clients trust the platform as their master content record</li>
+      <li>That same content should power every sales pitch, proposal, and onboarding conversation</li>
+      <li>Right now, sales teams manually rebuild decks that already exist inside the CMS</li>
+      <li>Personalization lives on the website — FlowPitch extends it into human conversations</li>
+      <li>One integration unlocks a whole new layer of value for every Core dna client</li>
+    </ul>
+  </div>
+
+  <!-- 3 WHAT FLOWPITCH DOES -->
+  <div class="sl cdna" data-t="cdna">
+    <div class="a lbl">What FlowPitch Does</div>
+    <div class="a hdl">Your content, <span class="red">presentation-ready</span><br>in under 60 seconds</div>
+    <p class="a sub">FlowPitch connects to Core dna's content engine and transforms structured content into tailored, on-brand presentation experiences — automatically, for any audience.</p>
+    <ul class="a bl">
+      <li>Pulls directly from Core dna's content API — always current, always on-brand</li>
+      <li>Generates account-specific decks by industry, persona, and funnel stage</li>
+      <li>Adapts any organisation's branding and tone without a designer or developer</li>
+      <li>Distils complex content into the right format for the right audience — automatically</li>
+      <li>White-labelable — your clients deploy it as their own presentation engine</li>
+    </ul>
+  </div>
+
+  <!-- 4 HOW IT WORKS -->
+  <div class="sl cdna" data-t="cdna">
+    <div class="a lbl">How It Works</div>
+    <div class="a hdl">Connect once.<br><span class="red">Present everywhere.</span></div>
+    <p class="a sub">FlowPitch integrates with Core dna in four steps — and from that point, every pitch runs on your content engine.</p>
+    <div class="a steps">
+      <div class="step">
+        <div class="scir">01</div>
+        <div class="slbl">Connect</div>
+        <div class="sdsc">FlowPitch links to Core dna via API — content, rules, and assets sync automatically</div>
+      </div>
+      <div class="step">
+        <div class="scir">02</div>
+        <div class="slbl">Configure</div>
+        <div class="sdsc">Map Core dna content to presentation templates by industry, persona, and deal stage</div>
+      </div>
+      <div class="step">
+        <div class="scir">03</div>
+        <div class="slbl">Generate</div>
+        <div class="sdsc">Sales inputs an account name — FlowPitch builds a tailored, on-brand deck in seconds</div>
+      </div>
+      <div class="step">
+        <div class="scir">04</div>
+        <div class="slbl">Convert</div>
+        <div class="sdsc">The rep walks in relationship-ready — focused on the decision, not the deck</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 MORPH / BRAND DEMO -->
+  <div class="sl morph" data-t="morph">
+    <div class="a lbl" style="text-align:center">Brand Adaptability</div>
+    <div class="a hdl" style="text-align:center;max-width:100%">One engine. <span style="color:#007dba">Any organisation's brand.</span></div>
+    <p class="a sub" style="text-align:center;margin:0 auto 0;max-width:680px">FlowPitch inherits any company's brand guidelines, colors, and tone — and applies them across every generated presentation, automatically.</p>
+    <div class="a morph-row">
+      <div class="bc">
+        <div class="bx cdna-bx">Core dna</div>
+        <div class="blbl">Content Source</div>
+      </div>
+      <div class="marr">→</div>
+      <div class="bc">
+        <div class="bx fp-bx"></div>
+        <div class="blbl">FlowPitch Engine</div>
+      </div>
+      <div class="marr">→</div>
+      <div class="bc">
+        <div class="bx anz-bx" style="font-size:.62rem;letter-spacing:.06em">Your Client</div>
+        <div class="blbl">Any Brand, Instantly</div>
+      </div>
+    </div>
+    <p class="a morph-note" style="color:#374151">No manual redesign. No developer. Every client gets their own branded presentation experience.</p>
+  </div>
+
+  <!-- 6 KEY BENEFITS -->
+  <div class="sl anz" data-t="anz">
+    <div class="a lbl">Key Benefits</div>
+    <div class="a hdl">Stop Presenting.<br><span class="blue">Start Deciding.</span></div>
+    <p class="a sub">The presentation is never the bottleneck again — teams focus on the relationships and decisions that actually move deals forward.</p>
+    <div class="a cg2">
+      <div class="bcard">
+        <div class="bn">01</div>
+        <div class="bt">Relationship Over Slides</div>
+        <div class="bb">FlowPitch auto-generates audience-specific materials so the team walks in fully prepared — spending every minute in the room building trust and driving decisions, not explaining decks they built overnight.</div>
+      </div>
+      <div class="bcard">
+        <div class="bn">02</div>
+        <div class="bt">Content Distillation</div>
+        <div class="bb">Turn a 60-slide technical proposal into a 5-slide executive summary. Automatically. FlowPitch serves the right depth of content to the right audience — without anyone manually reformatting a thing.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7 USE CASES -->
+  <div class="sl cdna" data-t="cdna">
+    <div class="a lbl">Use Cases</div>
+    <div class="a hdl">Core dna content,<br><span class="red">activated everywhere</span></div>
+    <p class="a sub">One FlowPitch integration unlocks high-value presentation moments across the entire Core dna client lifecycle.</p>
+    <div class="a cg4">
+      <div class="card">
+        <div class="ci">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e8002d" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg>
+        </div>
+        <div class="ct">Sales Enablement</div>
+        <div class="cb">Account-specific decks generated from Core dna content in seconds — consistent, on-brand, always current</div>
+      </div>
+      <div class="card">
+        <div class="ci">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e8002d" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </div>
+        <div class="ct">Proposal Microsites</div>
+        <div class="cb">Interactive proposals that pull live content directly from Core dna's CMS — dynamic, personalised, never stale</div>
+      </div>
+      <div class="card">
+        <div class="ci">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e8002d" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="ct">Client Onboarding</div>
+        <div class="cb">Auto-generated onboarding presentations tailored by client segment, product, and region — every time</div>
+      </div>
+      <div class="card">
+        <div class="ci">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e8002d" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div class="ct">Marketing → Sales Bridge</div>
+        <div class="cb">Technical documentation and campaign content reshaped into audience-ready pitch materials automatically</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8 SINGLE SOURCE OF TRUTH -->
+  <div class="sl cdna" data-t="cdna">
+    <div class="a lbl">The Core dna Advantage</div>
+    <div class="a hdl">Extend the single source<br><span class="red">of truth into every room</span></div>
+    <p class="a sub">Core dna's content engine is already the most reliable, structured, and personalized content record a business has. FlowPitch makes it the foundation of every client conversation too.</p>
+    <div class="a split">
+      <div class="sc">
+        <div class="st"><span class="dot"></span>Core dna Already Delivers</div>
+        <ul class="bl">
+          <li>Centralised content, commerce &amp; personalization</li>
+          <li>Structured content with governance and version control</li>
+          <li>Multi-site delivery and omnichannel reach</li>
+          <li>Automation rules by segment, persona &amp; behavior</li>
+        </ul>
+      </div>
+      <div class="sc hi">
+        <div class="st"><span class="dot"></span>FlowPitch Extends It To</div>
+        <ul class="bl">
+          <li>Sales decks, proposals &amp; pitch presentations</li>
+          <li>Account-specific, persona-driven conversation materials</li>
+          <li>Partner and client onboarding experiences</li>
+          <li>Every human touchpoint in the revenue cycle</li>
+        </ul>
+      </div>
+    </div>
+    <div class="a snote">API-connected · White-labelable · Always in sync with Core dna content</div>
+  </div>
+
+  <!-- 9 POSITIONING -->
+  <div class="sl cdna" data-t="cdna">
+    <div class="a lbl">Why This Works</div>
+    <div class="a hdl">Complementary by design.<br><span class="red">Powerful together.</span></div>
+    <p class="a sub">FlowPitch doesn't replace anything Core dna does — it activates Core dna's content in the one place personalization hasn't reached yet: the live conversation.</p>
+    <ul class="a bl">
+      <li>Core dna remains the single source of truth — FlowPitch reads from it, never replaces it</li>
+      <li>Personalization that already exists in Core dna flows directly into every generated deck</li>
+      <li>Sales teams stop working outside the platform — the CMS becomes their pitch engine</li>
+      <li>Core dna clients get more value from content they've already invested in building</li>
+      <li>Proves personalization ROI beyond the website — at the human conversion layer</li>
+    </ul>
+  </div>
+
+  <!-- 10 CLOSING -->
+  <div class="sl anz closing" data-t="anz">
+    <div class="a lbl">What's Next</div>
+    <div class="a cbig">Make Core dna's content<br>work as hard <em>in the room</em><br>as it does <em>on the web</em></div>
+    <p class="a sub" style="color:rgba(255,255,255,.62);margin-bottom:28px">FlowPitch turns Core dna's structured content and personalization rules into dynamic, client-specific presentation experiences — for every sales conversation, proposal, onboarding session, and partner meeting.</p>
+    <div class="a"><span class="cta-btn">Let's build this together →</span></div>
+    <p class="a cfn">"Core dna manages the content. FlowPitch makes it customer-convincing."</p>
+  </div>
+
+</div>
+
+<div id="dots"></div>
+<div id="hints"><span class="k">←</span><span class="k">Space</span><span class="k">→</span></div>
+
+<script>
+(function(){
+  const sls = Array.from(document.querySelectorAll('.sl'));
+  const dotsEl = document.getElementById('dots');
+  const nav = document.getElementById('topNav');
+  const sc = document.getElementById('slideCounter');
+  let cur = 0;
+  const N = sls.length;
+
+  // Build dots
+  sls.forEach((_,i) => {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.onclick = () => go(i);
+    dotsEl.appendChild(d);
+  });
+  const dots = () => dotsEl.querySelectorAll('.dot');
+
+  function go(n) {
+    if (n < 0 || n >= N) return;
+    sls[cur].classList.remove('active');
+    sls[cur].classList.add('gone');
+    cur = n;
+    sls.forEach((s,i) => { s.classList.remove('active','gone'); if(i<cur) s.classList.add('gone'); });
+    sls[cur].classList.add('active');
+    dots().forEach((d,i) => d.classList.toggle('on', i===cur));
+    sc.textContent = (cur+1) + ' / ' + N;
+    const t = sls[cur].dataset.t;
+    const isAnz = t==='anz';
+    const isMorph = t==='morph';
+    nav.classList.toggle('anz', isAnz || isMorph);
+    document.body.classList.toggle('anz-mode', isAnz);
+  }
+
+  // Init
+  sls[0].classList.add('active');
+  dots()[0].classList.add('on');
+
+  document.addEventListener('keydown', e => {
+    if([' ','ArrowRight','ArrowDown'].includes(e.key)){e.preventDefault();go(cur+1);}
+    if(['ArrowLeft','ArrowUp'].includes(e.key)){e.preventDefault();go(cur-1);}
+  });
+  let tx=0;
+  document.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
+  document.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>48)dx<0?go(cur+1):go(cur-1);});
+
+  // PDF Export
+  document.getElementById('exportPdfBtn').addEventListener('click', async function(){
+    const btn=this;
+    btn.disabled=true;btn.textContent='Exporting…';
+    try{
+      await ld('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+      await ld('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+    }catch(e){
+      alert('PDF export requires cdnjs.cloudflare.com. Please check network access.');
+      btn.disabled=false;btn.textContent='Export PDF';return;
+    }
+    document.body.classList.add('exporting');
+    const saved=cur;
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF({orientation:'landscape',unit:'px',format:[1920,1080]});
+    let first=true;
+    for(let i=0;i<N;i++){
+      sls.forEach(s=>s.style.display='none');
+      sls[i].style.cssText='position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:80px 110px;opacity:1;transform:none;pointer-events:all;overflow:hidden;';
+      sls[i].classList.add('active');
+      sls[i].querySelectorAll('.a').forEach(el=>{el.style.opacity='1';el.style.transform='none';el.style.transition='none';});
+      await tick(120);
+      const stage=document.createElement('div');
+      stage.style.cssText='position:fixed;left:-10000px;top:0;width:1920px;height:1080px;overflow:hidden;';
+      const cl=sls[i].cloneNode(true);
+      cl.style.cssText='position:absolute;inset:0;width:1920px;height:1080px;display:flex;flex-direction:column;justify-content:center;padding:90px 120px;opacity:1;transform:none;overflow:hidden;';
+      cl.querySelectorAll('.a').forEach(el=>{el.style.opacity='1';el.style.transform='none';el.style.transition='none';});
+      stage.appendChild(cl);document.body.appendChild(stage);
+      await tick(80);
+      const canvas=await html2canvas(stage,{backgroundColor:null,scale:1,useCORS:true,allowTaint:true,width:1920,height:1080,windowWidth:1920,windowHeight:1080});
+      const img=canvas.toDataURL('image/jpeg',.9);
+      if(!first)pdf.addPage([1920,1080],'landscape');
+      pdf.addImage(img,'JPEG',0,0,1920,1080);
+      first=false;
+      document.body.removeChild(stage);
+    }
+    pdf.save('FlowPitch-CoreDNA.pdf');
+    sls.forEach(s=>s.style.cssText='');
+    document.body.classList.remove('exporting');
+    sls.forEach((s,i)=>{s.classList.remove('active','gone');if(i<saved)s.classList.add('gone');});
+    go(saved);
+    btn.disabled=false;btn.textContent='Export PDF';
+  });
+
+  function ld(src){return new Promise((res,rej)=>{if(document.querySelector(`script[src="${src}"]`)){res();return;}const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);})}
+  function tick(ms){return new Promise(r=>setTimeout(r,ms))}
+})();
+</script>
 </body>
 </html>
