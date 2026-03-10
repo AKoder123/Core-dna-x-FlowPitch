@@ -449,9 +449,24 @@ body.exporting .cg{background:none!important;-webkit-background-clip:initial!imp
     if([' ','ArrowRight','ArrowDown'].includes(e.key)){e.preventDefault();go(cur+1);}
     if(['ArrowLeft','ArrowUp'].includes(e.key)){e.preventDefault();go(cur-1);}
   });
+  // Touch swipe
   let tx=0;
   document.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
   document.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>48)dx<0?go(cur+1):go(cur-1);});
+
+  // Wheel / trackpad — cooldown matches the 0.5s slide transition
+  let wheelLock=false, wheelAccum=0;
+  document.addEventListener('wheel', e=>{
+    e.preventDefault();
+    if(wheelLock) return;
+    wheelAccum += e.deltaY;
+    if(Math.abs(wheelAccum) >= 80){
+      wheelAccum > 0 ? go(cur+1) : go(cur-1);
+      wheelAccum = 0;
+      wheelLock = true;
+      setTimeout(()=>{ wheelLock=false; }, 550);
+    }
+  }, {passive:false});
 
   // PDF Export
   document.getElementById('exportPdfBtn').addEventListener('click', async function(){
